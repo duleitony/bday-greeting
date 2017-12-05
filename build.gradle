@@ -29,6 +29,7 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 
 sourceCompatibility = 1.8
@@ -49,12 +50,12 @@ dependencies {
     compile group: 'org.apache.camel',              name: 'camel-quartz',                   version: '2.20.1'
     compile group: 'org.apache.camel',              name: 'camel-core',                     version: '2.20.0'
     compile group: 'org.apache.camel',              name: 'camel-bindy',                    version: '2.20.1'
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.0.Final'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.5.Final'
 
     testCompile group: 'org.apache.camel', name: 'camel-test-spring', version: '2.20.0'
     testCompile group: 'org.apache.camel', name: 'camel-test', version: '2.20.0'
     testCompile group: 'org.springframework.boot',  name: 'spring-boot-starter-test',       version: '1.5.8.RELEASE'
-
-    compileClasspath    group: 'org.projectlombok',                 name: 'lombok',              version:'1.16.18'
 }
 
 jar {

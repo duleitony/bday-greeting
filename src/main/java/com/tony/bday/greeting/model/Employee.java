@@ -21,24 +21,28 @@ public class Employee {
     private String Email;
 
     public String getName() {
+        if(Name==null || Name.isEmpty()) {throw new RuntimeException("Name cannot be null or empty");}
         return Name;
     }
     public void setName(String name) {
         Name = name;
     }
     public String getSurName() {
+        if(SurName==null || SurName.isEmpty()) {throw new RuntimeException("Surname cannot be null or empty");}
         return SurName;
     }
     public void setSurName(String surName) {
         SurName = surName;
     }
     public String getBirthday() {
+        if(Birthday==null || Birthday.isEmpty()) {throw new RuntimeException("Birtday cannot be null or empty");}
         return Birthday;
     }
     public void setBirthday(String birthday) {
         Birthday = birthday;
     }
     public String getEmail() {
+        if(Email==null || Email.isEmpty()) {throw new RuntimeException("Email cannot be null or empty");}
         return Email;
     }
     public void setEmail(String email) {
