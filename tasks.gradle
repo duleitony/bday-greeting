@@ -1,0 +1,7 @@
+/**
+ * Wrapper task to generate gradlew executables, which will use the Gradle version written here.
+ * Need to be run only when Gradle version changes
+ */
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0'
+}
