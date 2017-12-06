@@ -18,6 +18,10 @@ import com.tony.bday.greeting.router.RouterForCsvToEmail;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @RunWith(CamelSpringBootRunner.class)
 @UseAdviceWith
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
@@ -28,10 +32,13 @@ public class RouterForCsvToEmailTest {
     @Autowired
     private CamelContext camelContext;
 
+    DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+    String today = df.format(new Date());
+
     @Test
     public void someBodyIsBirthday()throws Exception  {
-        String msg = "Tony, Li, 1975/12/05, lei.du@foobar.com";
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        String msg = "Tony, Li," + today + ", lei.du@foobar.com";
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -50,7 +57,7 @@ public class RouterForCsvToEmailTest {
 
     @Test
     public void nobodyIsBirthday() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -69,7 +76,7 @@ public class RouterForCsvToEmailTest {
 
     @Test
     public void mutlipleRecords() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -78,7 +85,7 @@ public class RouterForCsvToEmailTest {
         });
         camelContext.start();
         MockEndpoint mock = camelContext.getEndpoint("mock:mutlipleRecords", MockEndpoint.class);
-        String msg = "Jun, Wang, 1975/11/30, jun.wang@foobar.com" + "\n" + "Suke, Zhao, 1975/12/05, suke.zhao@foobar.com";
+        String msg = "Jun, Wang, 1975/11/30, jun.wang@foobar.com" + "\n" + "Suke, Zhao," + today + ", suke.zhao@foobar.com";
         mock.expectedBodiesReceived(msg);
         mock.expectedMessageCount(1);
         assertNotNull(mock.getReceivedExchanges());
@@ -88,7 +95,7 @@ public class RouterForCsvToEmailTest {
 
     @Test(expected = RuntimeException.class)
     public void noEmail() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -97,7 +104,7 @@ public class RouterForCsvToEmailTest {
         });
         camelContext.start();
         MockEndpoint mock = camelContext.getEndpoint("mock:noEmail", MockEndpoint.class);
-        String msg = "Suke, Zhao, 1975/12/05,";
+        String msg = "Suke, Zhao, " + today + ",";
         mock.expectedBodiesReceived(msg);
         mock.expectedMessageCount(1);
         assertNotNull(mock.getReceivedExchanges());
@@ -107,7 +114,7 @@ public class RouterForCsvToEmailTest {
 
     @Test(expected = RuntimeException.class)
     public void noBirthday() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -126,7 +133,7 @@ public class RouterForCsvToEmailTest {
 
     @Test(expected = RuntimeException.class)
     public void noName() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -145,7 +152,7 @@ public class RouterForCsvToEmailTest {
 
     @Test
     public void noSurName() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -154,7 +161,7 @@ public class RouterForCsvToEmailTest {
         });
         camelContext.start();
         MockEndpoint mock = camelContext.getEndpoint("mock:noSurName", MockEndpoint.class);
-        String msg = "Jun,,1975/12/05,jun.wang@foobar.com";
+        String msg = "Jun,," + today + ",jun.wang@foobar.com";
         mock.expectedBodiesReceived(msg);
         mock.expectedMessageCount(1);
         assertNotNull(mock.getReceivedExchanges());
@@ -164,7 +171,7 @@ public class RouterForCsvToEmailTest {
 
     @Test(expected = RuntimeException.class)
     public void noAllFields() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
@@ -183,7 +190,7 @@ public class RouterForCsvToEmailTest {
 
     @Test
     public void emptyFile() throws Exception {
-        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+         camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
