@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.camel:camel-bindy:2.20.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.camel/camel-bindy/2.20.1/2e1176b33d83a85b06dc198157bf07f9ec1be585/camel-bindy-2.20.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.camel/camel-bindy/2.20.1/35cba56549f3b21ee13e4f06ce84474eb8b917cb/camel-bindy-2.20.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

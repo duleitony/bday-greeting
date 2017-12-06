@@ -97,7 +97,45 @@ public class RouterForCsvToEmailTest {
         });
         camelContext.start();
         MockEndpoint mock = camelContext.getEndpoint("mock:noEmail", MockEndpoint.class);
-        String msg = "Jun, Wang, 1975/11/30, jun.wang@foobar.com" + "\n" + "Suke, Zhao, 1975/12/05";
+        String msg = "Suke, Zhao, 1975/12/05,";
+        mock.expectedBodiesReceived(msg);
+        mock.expectedMessageCount(1);
+        assertNotNull(mock.getReceivedExchanges());
+        producerTemplate.sendBody("direct:a", msg);
+        mock.assertIsSatisfied();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void noBirthday() throws Exception {
+        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                replaceFromWith("direct:a");
+                weaveAddLast().to("mock:noBirthday");
+            }
+        });
+        camelContext.start();
+        MockEndpoint mock = camelContext.getEndpoint("mock:noBirthday", MockEndpoint.class);
+        String msg = "Jun, Want,,jun.wang@foobar.com";
+        mock.expectedBodiesReceived(msg);
+        mock.expectedMessageCount(1);
+        assertNotNull(mock.getReceivedExchanges());
+        producerTemplate.sendBody("direct:a", msg);
+        mock.assertIsSatisfied();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void noName() throws Exception {
+        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                replaceFromWith("direct:a");
+                weaveAddLast().to("mock:noName");
+            }
+        });
+        camelContext.start();
+        MockEndpoint mock = camelContext.getEndpoint("mock:noName", MockEndpoint.class);
+        String msg = ",Jun, 1975/11/30, jun.wang@foobar.com";
         mock.expectedBodiesReceived(msg);
         mock.expectedMessageCount(1);
         assertNotNull(mock.getReceivedExchanges());
@@ -106,16 +144,54 @@ public class RouterForCsvToEmailTest {
     }
 
     @Test
-    public void noRecords() throws Exception {
+    public void noSurName() throws Exception {
         camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:a");
-                weaveAddLast().to("mock:noRecords");
+                weaveAddLast().to("mock:noSurName");
             }
         });
         camelContext.start();
-        MockEndpoint mock = camelContext.getEndpoint("mock:noRecords", MockEndpoint.class);
+        MockEndpoint mock = camelContext.getEndpoint("mock:noSurName", MockEndpoint.class);
+        String msg = "Jun,,1975/12/05,jun.wang@foobar.com";
+        mock.expectedBodiesReceived(msg);
+        mock.expectedMessageCount(1);
+        assertNotNull(mock.getReceivedExchanges());
+        producerTemplate.sendBody("direct:a", msg);
+        mock.assertIsSatisfied();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void noAllFields() throws Exception {
+        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                replaceFromWith("direct:a");
+                weaveAddLast().to("mock:noAllFields");
+            }
+        });
+        camelContext.start();
+        MockEndpoint mock = camelContext.getEndpoint("mock:noAllFields", MockEndpoint.class);
+        String msg = ",,,";
+        mock.expectedBodiesReceived(msg);
+        mock.expectedMessageCount(1);
+        assertNotNull(mock.getReceivedExchanges());
+        producerTemplate.sendBody("direct:a", msg);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void emptyFile() throws Exception {
+        camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                replaceFromWith("direct:a");
+                weaveAddLast().to("mock:emptyFile");
+            }
+        });
+        camelContext.start();
+        MockEndpoint mock = camelContext.getEndpoint("mock:emptyFile", MockEndpoint.class);
         String msg = "";
         mock.expectedBodiesReceived(msg);
         mock.expectedMessageCount(1);

@@ -28,7 +28,6 @@ public class Employee {
         Name = name;
     }
     public String getSurName() {
-        if(SurName==null || SurName.isEmpty()) {throw new RuntimeException("Surname cannot be null or empty");}
         return SurName;
     }
     public void setSurName(String surName) {
