@@ -32,7 +32,7 @@ public class GetTargetRecords implements Processor {
 
         Employee employee = (Employee)exchange.getIn().getBody();
         Employee targetEmployee = null;
-        if (isBirthdayToday(employee)) {
+        if (isBirthdayToday(employee.getBirthday())) {
             LOGGER.info("2-2 " + employee.getName() + " is birthday today");
             targetEmployee = employee;
         } else {
@@ -48,11 +48,11 @@ public class GetTargetRecords implements Processor {
      * @return
      * @throws ParseException
      */
-    private boolean isBirthdayToday(Employee employee) throws ParseException {
+    public boolean isBirthdayToday(String birthdayStr) throws ParseException {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        Date birthday = df.parse(employee.getBirthday());
+        Date birthday = df.parse(birthdayStr);
         cal.setTime(new Date());
         cal2.setTime(birthday);
         cal2.set(cal.get(Calendar.YEAR), cal2.get(Calendar.MONTH), cal2.get(Calendar.DAY_OF_MONTH));
