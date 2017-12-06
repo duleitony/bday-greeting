@@ -56,6 +56,26 @@ public class RouterForCsvToEmailTest {
     }
 
     @Test
+    public void morePeopleAreBirthday()throws Exception  {
+        String msg = "Tony, Li," + today + ", lei.du@foobar.com" + "\n" + "Mei, Han, " + today + ", mei.han@foobar.com";
+        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                replaceFromWith("direct:a");
+                weaveAddLast().to("mock:morePeopleAreBirthday");
+            }
+        });
+        // manual start camel
+        camelContext.start();
+        MockEndpoint mock = camelContext.getEndpoint("mock:morePeopleAreBirthday", MockEndpoint.class);
+        mock.expectedBodiesReceived(msg);
+        mock.expectedMessageCount(1);
+        assertNotNull(mock.getReceivedExchanges());
+        producerTemplate.sendBody("direct:a", msg);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     public void nobodyIsBirthday() throws Exception {
         camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
