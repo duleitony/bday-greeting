@@ -1,8 +1,6 @@
 package com.tony.bday.greeting.unitTest;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -63,25 +61,6 @@ public class GetTargetRecordsProcessorTest {
     @Test
     public void noBodyIsBirthdayWithSingleRecord()throws Exception  {
         String msg = "Lei, Du, 1975/11/30, lei.du@foobar.com";
-
-        camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-               replaceFromWith("direct:a");
-//                weaveAddLast().to("mock:result");
-                weaveById("processor-3").before().to("mock:result");
-            }
-        });
-        camelContext.start();
-        MockEndpoint mock = camelContext.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMessageCount(0);
-        producerTemplate.sendBody("direct:a", msg);
-        mock.assertIsSatisfied();
-    }
-
-    @Test
-    public void noBodyIsBirthdayWithMultipleRecord()throws Exception  {
-        String msg = "Lei, Du, 1975/11/30, lei.du@foobar.com" + "\n" + "Mei, Han, 1975/10/30, mei.han@foobar.com";
 
         camelContext.getRouteDefinition("router-1").adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
