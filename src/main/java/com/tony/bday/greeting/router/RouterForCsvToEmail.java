@@ -34,8 +34,8 @@ public class RouterForCsvToEmail extends SpringRouteBuilder {
 
         from(filePath + "?include=.*.csv&sendEmptyMessageWhenIdle=true&noop=true&" + scheduler).routeId("router-1")
         .split().tokenize("\n", 1)
-        .log(LoggingLevel.INFO, "1-1", "====START====")
-        .unmarshal(bindy)
+        .log(LoggingLevel.INFO, "1-1", "==========[START] The body is : ${body}==========" )
+        .unmarshal(bindy).id("unmarshal-1")
         .process(new GetTargetRecords()).id("processor-2")
         .choice().when(body().isNotNull())
             .log(LoggingLevel.INFO, "1-2", "Target employee details are ${body}")
@@ -43,6 +43,6 @@ public class RouterForCsvToEmail extends SpringRouteBuilder {
 //          .to("imap://host?username=user2&password=pass2")
         .endChoice()
         .end()
-        .log(LoggingLevel.INFO, "1-3", "=====END=====");
+        .log(LoggingLevel.INFO, "1-3", "====================END====================");
     }
 }
