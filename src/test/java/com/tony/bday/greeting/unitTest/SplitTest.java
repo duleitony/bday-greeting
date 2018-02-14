@@ -1,6 +1,5 @@
 package com.tony.bday.greeting.unitTest;
 
-import com.tony.bday.greeting.model.Employee;
 import com.tony.bday.greeting.router.RouterForCsvToEmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
@@ -16,12 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static org.junit.Assert.assertFalse;
 
 @RunWith(CamelSpringBootRunner.class)
 @UseAdviceWith
