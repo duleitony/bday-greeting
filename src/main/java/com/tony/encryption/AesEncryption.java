@@ -1,15 +1,20 @@
 package com.tony.encryption;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidParameterSpecException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -21,31 +26,38 @@ import org.apache.commons.codec.binary.Hex;
  */
 public class AesEncryption {
 
-    public static void main(String[] args) {
-//        AesKeyGenerator(128);
-//        AesKeyGenerator(192);
-        AesKeyGenerator(256);
+    public static void main(String[] args) throws InvalidKeyException,
+    NoSuchAlgorithmException, NoSuchPaddingException, 
+    InvalidParameterSpecException, IllegalBlockSizeException, 
+    BadPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException {
+        byte[] aes128Key = AesBinaryKeyGenerator(128);
+        String plainText = "Hello World";
+        String cipherText = encryptWithAesCbc(plainText, aes128Key);
+        System.out.println("cipher text of " + plainText + " is: " + cipherText);
 
-        String plantext = "Hello World";
     }
 
-    public static String encryptWithAesCbc(String plaintext, String key)
+    public static String encryptWithAesCbc(String plaintext, byte[] key)
             throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidParameterSpecException {
-        //SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
-        final SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        
+            NoSuchPaddingException, InvalidParameterSpecException, 
+            IllegalBlockSizeException, BadPaddingException, 
+            InvalidAlgorithmParameterException, UnsupportedEncodingException {
+        byte[] cipherText;
+        final SecretKey secretKey = new SecretKeySpec(key, "AES");
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        //generate IV-
         IvParameterSpec spec = 
            cipher.getParameters().getParameterSpec(IvParameterSpec.class);
         byte[] iv = spec.getIV();
         final IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-        
-        return null;
+
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
+        cipherText = cipher.doFinal(plaintext.getBytes("UTF-8"));
+
+        return DatatypeConverter.printHexBinary(cipherText);
     }
 
-    public static String decryptWithAesGcm() {
+    public static String dencryptWithAesCbc() {
         return null;
     }
 
@@ -53,33 +65,33 @@ public class AesEncryption {
         return null;
     }
 
-    public static String dencryptWithAesCbc() {
+    public static String decryptWithAesGcm() {
         return null;
     }
 
-    public static String AesKeyGenerator(int keySize) {
+    public static byte[] AesBinaryKeyGenerator(int keySize) {
         final String ENCRYPTION_ALGORITHM_AES="AES";
-
         KeyGenerator keyGen;
         String hexKey = null;
+        byte[] binaryKey = null;
 
         try {
             keyGen = KeyGenerator.getInstance(ENCRYPTION_ALGORITHM_AES);
             keyGen.init(keySize); 
 
             SecretKey secretKey = keyGen.generateKey();
-            byte[] binaryKey = secretKey.getEncoded();
+            binaryKey = secretKey.getEncoded();
             System.out.println("The length of binaryKey is : " + binaryKey.length + " bytes");
 
-            hexKey = Hex.encodeHexString(binaryKey);
+            hexKey = DatatypeConverter.printHexBinary(binaryKey);
             System.out.println("AesKey in HEX is : " + hexKey);
-            System.out.println("The length of AesKey is : " + hexKey.length());
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
-        return hexKey;
+        //in case if you return hexKey, DatatypeConverter.parseHexBinary() can be used to convert from hex to binary array
+        return binaryKey;
         
     }
 }

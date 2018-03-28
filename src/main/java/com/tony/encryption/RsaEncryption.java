@@ -4,6 +4,8 @@ import java.security.InvalidKeyException;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidParameterSpecException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -55,12 +57,13 @@ public class RsaEncryption {
         return null;
     }
 
-    public static String RsaKeyPairGenerator(int keySize) {
+    public static Map<String, String> RsaKeyPairGenerator(int keySize) {
         final String ENCRYPTION_ALGORITHM_RSA="RSA";
 
         KeyPairGenerator keyPairGen;
         String hexPrivateKey = null;
         String hexPublicKey = null;
+        Map<String, String> keyPair = new HashMap<String, String>();
 
         try {
             keyPairGen = KeyPairGenerator.getInstance(ENCRYPTION_ALGORITHM_RSA);
@@ -73,18 +76,20 @@ public class RsaEncryption {
 
             hexPrivateKey = Hex.encodeHexString(binaryPrivateKey);
             hexPublicKey = Hex.encodeHexString(binaryPublicKey);
+            keyPair.put("privateKey", hexPrivateKey);
+            keyPair.put("publicKey", hexPublicKey);
 
-            System.out.println("hexPrivateKey in HEX is : " + hexPrivateKey);
-            System.out.println("hexPublicKey in HEX is : " + hexPublicKey);
+            System.out.println("hexPrivateKey in HEX is : " + keyPair.get("privateKey"));
+            System.out.println("hexPublicKey in HEX is : " + keyPair.get("publicKey"));
 
-            System.out.println("The length of hexPrivateKey is : " + hexPrivateKey.length());
-            System.out.println("The length of hexPublicKey is : " + hexPublicKey.length());
+            System.out.println("The length of hexPrivateKey is : " + keyPair.get("privateKey").length());
+            System.out.println("The length of hexPublicKey is : " + keyPair.get("publicKey").length());
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
-        return hexPublicKey;
+        return keyPair;
         
     }
 }
