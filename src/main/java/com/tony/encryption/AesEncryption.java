@@ -12,6 +12,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -23,23 +25,28 @@ import javax.xml.bind.DatatypeConverter;
  *
  */
 public class AesEncryption {
-    final static String TRANSFORMATION = "AES/CBC/PKCS5Padding";
+    final static String TRANSFORMATION_AESCBC = "AES/CBC/PKCS5Padding";
+    final static String TRANSFORMATION_AESGCM = "AES/GCM/NoPadding";
 
     public static void main(String[] args)
             throws InvalidKeyException,
     NoSuchAlgorithmException, NoSuchPaddingException, 
     InvalidParameterSpecException, IllegalBlockSizeException, 
     BadPaddingException, InvalidAlgorithmParameterException, 
-    UnsupportedEncodingException 
+    UnsupportedEncodingException, ShortBufferException 
     {
         String plainText = "Hello World!";
         //By default, the key size is supported by Java8 is 128
-        byte[] aes128Key = AesBinaryKeyGenerator(128);
+        byte[] aes128SecretKey = AesBinaryKeyGenerator(128);
         IvParameterSpec ivParameterSpec = generateIv();
-        String cipherText = encryptWithAesCbc(plainText, aes128Key, ivParameterSpec);
-        String decryptedPlainText = dencryptWithAesCbc(cipherText, aes128Key, ivParameterSpec);
+        //String cipherText = encryptWithAesCbc(plainText, aes128SecretKey, ivParameterSpec);
+        //String decryptedPlainText = dencryptWithAesCbc(cipherText, aes128SecretKey, ivParameterSpec);
 
+        GCMParameterSpec myParams = new GCMParameterSpec(128, ivParameterSpec.getIV());
+        String cipherText = encryptWithAesGcm(plainText, aes128SecretKey, myParams);
         System.out.println("The cipher text of " + plainText + " is: " + cipherText);
+
+        String decryptedPlainText = decryptWithAesGcm(cipherText, aes128SecretKey, myParams);
         System.out.println("The plain text of " + cipherText + " is: " + decryptedPlainText);
     }
 
@@ -66,8 +73,8 @@ public class AesEncryption {
             InvalidAlgorithmParameterException, UnsupportedEncodingException 
     {
         byte[] cipherText;
-        final SecretKey secretKey = new SecretKeySpec(key, "AES");
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION_AESCBC);
 
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
         cipherText = cipher.doFinal(plaintext.getBytes("UTF-8"));
@@ -95,22 +102,73 @@ public class AesEncryption {
             IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException 
     {
         byte[] plainText;
-        final SecretKey secretKey = new SecretKeySpec(key, "AES");
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION_AESCBC);
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
         plainText = cipher.doFinal(DatatypeConverter.parseHexBinary(cipherText));
 
         return new String(plainText);
     }
 
-    public static String encryptWithAesGcm() {
-        return null;
+    /**
+     * 
+     * 
+     * @param plainText
+     * @param key
+     * @param myParams2
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeyException
+     * @throws InvalidAlgorithmParameterException
+     * @throws ShortBufferException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     */
+    public static String encryptWithAesGcm(String plainText, byte[] key, GCMParameterSpec myParams) 
+            throws NoSuchAlgorithmException, NoSuchPaddingException, 
+            InvalidKeyException, InvalidAlgorithmParameterException, ShortBufferException, IllegalBlockSizeException, BadPaddingException 
+    {
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION_AESGCM);
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, myParams);
+        byte[] binaryCipherText = new byte[cipher.getOutputSize(plainText.getBytes().length)];
+        //cipher.updateAAD(plainText.getBytes());
+        cipher.doFinal(plainText.getBytes(), 0, plainText.getBytes().length, binaryCipherText);
+
+        return  DatatypeConverter.printHexBinary(binaryCipherText);
     }
 
-    public static String decryptWithAesGcm() {
-        return null;
-    }
+    /**
+     * 
+     * 
+     * @param cipherText
+     * @param key
+     * @param myParams2
+     * @return
+     * @throws InvalidKeyException
+     * @throws InvalidAlgorithmParameterException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     */
+    public static String decryptWithAesGcm(String cipherText, byte[] key, GCMParameterSpec myParams) 
+            throws InvalidKeyException, InvalidAlgorithmParameterException, 
+            NoSuchAlgorithmException, NoSuchPaddingException, 
+            IllegalBlockSizeException, BadPaddingException 
+    {
+        byte[] plainText;
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION_AESGCM);
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, myParams);
+        //cipher.updateAAD(plainText.getBytes());
+        plainText = cipher.doFinal(DatatypeConverter.parseBase64Binary(cipherText));
 
+        return new String(plainText);
+    };
+
+    //================================================================================================================//
     /**
      * The method is used to generate IV
      * 
@@ -123,7 +181,7 @@ public class AesEncryption {
             throws InvalidParameterSpecException, 
             NoSuchAlgorithmException, NoSuchPaddingException 
     {
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION_AESCBC);
         IvParameterSpec spec = 
            cipher.getParameters().getParameterSpec(IvParameterSpec.class);
         byte[] iv = spec.getIV();
