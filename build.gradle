@@ -57,6 +57,9 @@ dependencies {
     testCompile group: 'org.apache.camel', name: 'camel-test-spring', version: '2.20.0'
     testCompile group: 'org.apache.camel', name: 'camel-test', version: '2.20.0'
     testCompile group: 'org.springframework.boot',  name: 'spring-boot-starter-test',       version: '1.5.8.RELEASE'
+
+    compileOnly('org.projectlombok:lombok')
+
 }
 
 jar {
