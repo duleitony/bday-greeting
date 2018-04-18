@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class lambdaTest {
+public class LambdaTest {
     public static void main(String[] args){
         //替代匿名内部类
         //before java8
