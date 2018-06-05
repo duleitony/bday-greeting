@@ -20,11 +20,4 @@ public class NewThreadByCallable {
         thread_01.start();
         thread_02.start();
     }
-
-    static class MyThread implements Runnable {
-        @Override
-        public void run(){
-            System.out.println(Thread.currentThread().getName() + " --> I am impletemented by implementing Runnable IF！");
-        }
-    }
 }
