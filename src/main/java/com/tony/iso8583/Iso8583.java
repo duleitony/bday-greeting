@@ -249,7 +249,7 @@ public class Iso8583 {
      * @param content8583
      */
     public static Map analyze8583(byte[] content8583) {
-        TreeMap filedMap=new TreeMap();
+        TreeMap fieldMap=new TreeMap();
         try {
             // 取位图
             byte[] bitMap16byte = new byte[16];
@@ -290,13 +290,13 @@ public class Iso8583 {
                         filedValue = new String(content8583, pos, defLen2, packet_encoding);
                         pos += defLen2;//记录当前位置
                     }
-                    filedMap.put(filedName, filedValue);
+                    fieldMap.put(filedName, filedValue);
                 }
             }//end for
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return filedMap;
+        return fieldMap;
     }
 
     //********************************以下是工具方法,有些没有使用到***********************************************************//
