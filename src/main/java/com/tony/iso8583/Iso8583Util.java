@@ -1,9 +1,18 @@
 package com.tony.iso8583;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 public class Iso8583Util {
+    public static void main(String[] args){
+        byte[] bcd = str2Bcd("6225887902610332");
+        System.out.println(bcd.length);
+        System.out.println(Hex.encodeHex(bcd));
+        System.out.println(bcd2Str(bcd));
+    }
+
     /**
      * 将str字符串转换成bcd编码的字节数组，比如字符串"123456"转成byte[] {0x12, 0x34, 0x56}
      * @param asc

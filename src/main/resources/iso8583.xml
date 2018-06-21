@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  This is the template for CUP ISO8583, it defines the necessary attributes for packing/unpacking.
+With this, you can define the attributes with a friendly interface, instead of setting them one by one
+in the code. Of course, you can also set all these attributes in the code when necessary.
+  The attributes are listed as follows:
+  1. global settings
+      1) secondary_bitmap(opt.)
+        indicating if secondary bitmap(i.e. filed 1) exists or not, "YES" for true, "NO" otherwise, default to "NO".
+      2) var_len_format(opt.)
+        the format of the varible length(i.e. L/LL/LLL), can be "BCD"/"ASC"/"BIN", default to "BCD"
+        i)  BCD: BCD
+        * for LVAR, 1 byte, range 0~9;
+        * for LLVAR, 1 byte, range 0~99;
+        * for LLLVAR, 2 bytes, range 0~999;
+        ii)  ASC: ASCII
+        * for LVAR, 1 byte, range 0~9;
+        * for LLVAR, 2 byte, range 0~99;
+        * for LLLVAR, 3 bytes, range 0~999;
+        iii) BIN: BINARY
+        * for LVAR, 1 byte, range 0~0xF;
+        * for LLVAR, 1 byte, range 0~0xFF;
+        * for LLLVAR, 2 bytes, range 0~0xFFF;
+
+  2. field settings
+      1) tag name(mandatory)
+        h: header, including TPDU and some other proprietary fields
+        m: msg id
+        fx: field x
+      2) format string (mandatory)
+        currently supports "A"/"N"/"S"/"AN"/"AS"/"NS"/"ANS"/"B"/"Z"
+          for variable length format, use ".x/..xx/...xxx"
+          e.g. Alpha 10 bytes: "A10";  Binary 64 bits: "B64";  Alphanumeric LLVAR with max length 80: "AN..80"
+      3) description (opt.)
+        this is optional, it's mainly for debug purpose.
+
+NOTE:
+  If you need to define fields above 64, 'secondary_bitmap' MUST be set to "YES" first;
+  Field 65 is specially for tertiary bitmap, setting format or value to this field is ignored internally;
+  For Android, you MUST place this file into assets.
+-->
+
+<iso8583 secondary_bitmap="NO"  var_len_format="BCD">
+    <h    format="N22"      description="header"/>
+    <m    format="N4"          description="msg_id"/>
+    ...
+</iso8583>
