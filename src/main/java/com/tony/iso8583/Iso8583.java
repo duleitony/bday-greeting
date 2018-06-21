@@ -83,14 +83,14 @@ public class Iso8583 {
     public static void main(String[] args) {
         try {
             //***********************组装8583报文测试--start***********************//
-            TreeMap filedMap=new TreeMap();//报文域
-            filedMap.put("FIELD003", "1799");//交易码
-            filedMap.put("FIELD013", "2013-11-06");//交易日期
-            filedMap.put("FIELD008", "12345678901");//账号
-            filedMap.put("FIELD033", "aa索隆bb");//注意这个域是变长域!
-            filedMap.put("FIELD036", "123456");//注意这个域是变长域!
+            TreeMap fieldMap=new TreeMap();//报文域
+            fieldMap.put("FIELD003", "1799");//交易码
+            fieldMap.put("FIELD013", "2013-11-06");//交易日期
+            fieldMap.put("FIELD008", "12345678901");//账号
+            fieldMap.put("FIELD033", "aa索隆bb");//注意这个域是变长域!
+            fieldMap.put("FIELD036", "123456");//注意这个域是变长域!
 
-            byte[] send=make8583(filedMap);
+            byte[] send=make8583(fieldMap);
             System.out.println("完成组装8583报文=="+new String(send,packet_encoding)+"==");
             //***********************组装8583报文测试--end***********************//
 
@@ -107,18 +107,18 @@ public class Iso8583 {
 
     /**
      * 组装8583报文
-     * @param filedMap
+     * @param fieldMap
      * @return
      */
-    public static byte[] make8583(TreeMap  filedMap){
+    public static byte[] make8583(TreeMap  fieldMap){
         byte[] whoe8583=null;
-        if(filedMap==null){
+        if(fieldMap==null){
             return null;
         }
         try {
             String  bitMap128=getInitBitMap();//获取初始化的128位图
             //按照8583定义器格式化各个域的内容
-            Map all=formatValueTo8583(filedMap,bitMap128);
+            Map all=formatValueTo8583(fieldMap,bitMap128);
             // 获取上送报文内容
             whoe8583=getWhole8583Packet(all);
             return whoe8583;
@@ -163,14 +163,14 @@ public class Iso8583 {
         }
     }
 
-    public static Map formatValueTo8583(TreeMap filedMap,String  bitMap128){
+    public static Map formatValueTo8583(TreeMap fieldMap,String  bitMap128){
         Map all=new HashMap();
         TreeMap formatedFiledMap=new TreeMap();//格式化结果
-        if(filedMap!=null){
-            Iterator it=filedMap.keySet().iterator();
+        if(fieldMap!=null){
+            Iterator it=fieldMap.keySet().iterator();
             for(;it.hasNext();){
                 String fieldName=(String)it.next();//例如FIELD005
-                String fieldValue=(String)filedMap.get(fieldName);//字段值
+                String fieldValue=(String)fieldMap.get(fieldName);//字段值
 
                 try{
                     if (fieldValue == null) {
@@ -222,7 +222,7 @@ public class Iso8583 {
                     }
 
                     // 返回结果赋值
-                    if (filedMap.containsKey(fieldName)) {
+                    if (fieldMap.containsKey(fieldName)) {
                         if (formatedFiledMap.containsKey(fieldName)) {
                             formatedFiledMap.remove(fieldName);
                         }
