@@ -54,6 +54,8 @@ dependencies {
     compile group: 'org.hibernate',                 name: 'hibernate-validator',            version: '6.0.5.Final'
     compile group: 'commons-codec',                 name: 'commons-codec',                  version: '1.9'
     compile group: 'javax.servlet',                 name: 'javax.servlet-api',              version: '3.0.1'
+    compile group: 'com.google.guava',              name: 'guava',                          version: '18.0'
+
 
     testCompile group: 'org.apache.camel', name: 'camel-test-spring', version: '2.20.0'
     testCompile group: 'org.apache.camel', name: 'camel-test', version: '2.20.0'
