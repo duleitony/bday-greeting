@@ -5,6 +5,7 @@ public class NewThreadByRunnable {
         System.out.println(Thread.currentThread().getName()+ " --> I am main Thread！");
         Thread thread_01 = new Thread(new MyThread());
         thread_01.setName("I am thread_01");
+
         Thread thread_02 = new Thread(new MyThread());
         thread_02.setName("I am thread_02");
 
